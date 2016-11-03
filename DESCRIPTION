@@ -1,0 +1,21 @@
+Package: sigbin
+Type: Package
+Title: Signal-based DNA sequence binning.
+Version: 0.1.0
+Authors@R: c(person("Jiri", "Hon", role = c("aut", "cre"),
+                    email = "jiri.hon@gmail.com"),
+             person("Kristyna", "Kupkova", role = "aut",
+                    email = "xkupko00@stud.feec.vutbr.cz"),
+             person("Karel", "Sedlar", role = "aut",
+                    email = "sedlar@feec.vutbr.cz"))
+Author: Jiri Hon, Kristyna Kupkova and Karel Sedlar
+Maintainer: Jiri Hon <jiri.hon@gmail.com>
+Description: More about what it does (maybe more than one line)
+    Use four spaces when indenting paragraphs within the Description.
+License: BSD_2_clause + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Depends: Biostrings
+Imports: Rcpp (>= 0.12.7)
+LinkingTo: Rcpp
+VignetteBuilder: knitr
