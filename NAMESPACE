@@ -1,4 +1,7 @@
-exportPattern("^[[:alpha:]]+")
+#exportPattern("^[[:alpha:]]+")
+export(dna_signal)
+export(hjorth_params)
+export(fasta_hjorth_params)
 importFrom(Rcpp, evalCpp)
 import(Biostrings)
 useDynLib(sigbin)

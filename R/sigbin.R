@@ -10,64 +10,70 @@
   A = pi/4,
   C = -3*pi/4,
   G = 3*pi/4,
-  T = -pi/4)
+  T = -pi/4,
+  N = 0
+)
 
-
-.sequence_signal <- function(dnastring) {
-  return(toComplex(dnastring, .sig_base_values))
-}
-
-.activity <- function(x) {
-  var(x)
-}
-
-.mobility <- function(x, dx) {
-  sd(dx)/sd(x)
-}
-
-.complexity <- function(x, dx) {
-  ddx <- diff(c(0, dx))
-  (sd(ddx)/sd(dx)) / (sd(dx)/sd(x))
-}
-
-#' Compute Hjorth parameters from numeric signal.
+#' Compute Hjorth parameters for DNA sequences or numeric signal.
 #'
-#' @param x Numeric vector or list of numeric vectors.
+#' @param x DNAString, DNAStringSet, numeric vector or list of numeric vectors.
 #' @return Data frame of Hjorth parameters.
 #'
 #' @examples
-#' sig_list <- dna2signal(DNAStringSet(c("ACGT","ACCT","GAAC")))
+#' sig_list <- dna_signal(DNAStringSet(c("ACGT","ACCT","GAAC")))
 #' hp <- hjorth_params(sig_list)
 #'
 hjorth_params <- function(x) {
   if (class(x) == "numeric") {
-    dx <- diff(c(0, x))
+    params <- vector("numeric", 3)
+    hjorth_params_single_sig_cpp(x, params)
     return(data.frame(
-      activity = .activity(x),
-      mobility = .mobility(x, dx),
-      complexity = .complexity(x, dx)))
-  } else if (class(x) == "list") {
+      activity = params[1],
+      mobility = params[2],
+      complexity = params[3]))
+  } else if (is.list(x)) {
     activity <- vector("numeric", length(x))
     mobility <- vector("numeric", length(x))
     complexity <- vector("numeric", length(x))
-
-    for (i in 1:length(x)) {
-      if (class(x[[i]]) == "numeric") {
-        dx <- diff(c(0, x[[i]]))
-        activity[i] <- .activity(x[[i]])
-        mobility[i] <- .mobility(x[[i]], dx)
-        complexity[i] <- .complexity(x[[i]], dx)
-      } else {
-        stop("All elements of signal list must be numeric vectors.")
-      }
-    }
+    hjorth_params_multi_sig_cpp(x, activity, mobility, complexity)
     return(data.frame(
       activity = activity,
       mobility = mobility,
       complexity = complexity))
   } else {
-    stop("Signal must be eighter numeric vector or list of numeric vectors.")
+    stop("Signal must be eighter a numeric vector or a list of numeric vectors.")
   }
+}
+
+#' Compute Hjorth parameters for all DNA sequences from FASTA file.
+#'
+#' @param filepath Path to FASTA file.
+#' @param block_size Number of sequences read at once into memory.
+#' @return Data frame of Hjorth parameters.
+#'
+#' @examples
+#'
+fasta_hjorth_params <- function(filepath, block_size = 1e4) {
+  seqlens <- fasta.seqlengths(filepath)
+  activity <- vector("numeric", length(seqlens))
+  mobility <- vector("numeric", length(seqlens))
+  complexity <- vector("numeric", length(seqlens))
+  max_seq_len <- max(seqlens)
+
+  read_status <- 0
+  while (read_status < length(seqlens)) {
+    dnaset <- readDNAStringSet(filepath, nrec = block_size, skip = read_status, use.names = FALSE)
+    seqset <- as.character(dnaset)
+    hjorth_params_multi_seq_cpp(seqset, max_seq_len, read_status, activity, mobility, complexity)
+    read_status <- read_status + length(dnaset)
+    print(read_status)
+  }
+  closeAllConnections()
+  return(data.frame(
+    activity = activity,
+    mobility = mobility,
+    complexity = complexity)
+  )
 }
 
 #' Convert DNA sequence into numeric signal.
@@ -81,11 +87,12 @@ hjorth_params <- function(x) {
 #'
 dna_signal <- function(subject) {
   if (class(subject) == "DNAString") {
-    return(.sequence_signal(subject))
+    return(sequence_to_signal_cpp(as.character(subject)))
   } else if (class(subject) == "DNAStringSet") {
     signal_list <- vector("list", length(subject))
-    for (i in 1:length(subject)) {
-      signal_list[[i]] <- .sequence_signal(subject[[i]])
+    seq_set <- as.character(subject)
+    for (i in 1:length(seq_set)) {
+      signal_list[[i]] <- sequence_to_signal_cpp(seq_set[i])
     }
     return(signal_list)
   } else {

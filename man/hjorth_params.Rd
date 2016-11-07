@@ -16,7 +16,7 @@ Data frame of Hjorth parameters.
 Compute Hjorth parameters for DNA sequences or numeric signal.
 }
 \examples{
-sig_list <- dna2signal(DNAStringSet(c("ACGT","ACCT","GAAC")))
+sig_list <- dna_signal(DNAStringSet(c("ACGT","ACCT","GAAC")))
 hp <- hjorth_params(sig_list)
 
 }
