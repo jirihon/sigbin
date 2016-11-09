@@ -5,29 +5,17 @@
 
 using namespace Rcpp;
 
-// sequence_to_signal_cpp
-NumericVector sequence_to_signal_cpp(std::string& seq);
-RcppExport SEXP sigbin_sequence_to_signal_cpp(SEXP seqSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string& >::type seq(seqSEXP);
-    rcpp_result_gen = Rcpp::wrap(sequence_to_signal_cpp(seq));
-    return rcpp_result_gen;
-END_RCPP
-}
-// hjorth_params_multi_seq_cpp
-void hjorth_params_multi_seq_cpp(std::vector<std::string>& seq_set, int max_seq_len, int offset, NumericVector& activity, NumericVector& mobility, NumericVector& complexity);
-RcppExport SEXP sigbin_hjorth_params_multi_seq_cpp(SEXP seq_setSEXP, SEXP max_seq_lenSEXP, SEXP offsetSEXP, SEXP activitySEXP, SEXP mobilitySEXP, SEXP complexitySEXP) {
+// hjorth_params_seq_cpp
+void hjorth_params_seq_cpp(std::vector<std::string>& seq_set, NumericVector& activity, NumericVector& mobility, NumericVector& complexity, int offset);
+RcppExport SEXP sigbin_hjorth_params_seq_cpp(SEXP seq_setSEXP, SEXP activitySEXP, SEXP mobilitySEXP, SEXP complexitySEXP, SEXP offsetSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::vector<std::string>& >::type seq_set(seq_setSEXP);
-    Rcpp::traits::input_parameter< int >::type max_seq_len(max_seq_lenSEXP);
-    Rcpp::traits::input_parameter< int >::type offset(offsetSEXP);
     Rcpp::traits::input_parameter< NumericVector& >::type activity(activitySEXP);
     Rcpp::traits::input_parameter< NumericVector& >::type mobility(mobilitySEXP);
     Rcpp::traits::input_parameter< NumericVector& >::type complexity(complexitySEXP);
-    hjorth_params_multi_seq_cpp(seq_set, max_seq_len, offset, activity, mobility, complexity);
+    Rcpp::traits::input_parameter< int >::type offset(offsetSEXP);
+    hjorth_params_seq_cpp(seq_set, activity, mobility, complexity, offset);
     return R_NilValue;
 END_RCPP
 }
@@ -42,16 +30,27 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
-// hjorth_params_multi_sig_cpp
-void hjorth_params_multi_sig_cpp(List& sig_list, NumericVector& activity, NumericVector& mobility, NumericVector& complexity);
-RcppExport SEXP sigbin_hjorth_params_multi_sig_cpp(SEXP sig_listSEXP, SEXP activitySEXP, SEXP mobilitySEXP, SEXP complexitySEXP) {
+// hjorth_params_sig_cpp
+void hjorth_params_sig_cpp(List& sig_list, NumericVector& activity, NumericVector& mobility, NumericVector& complexity);
+RcppExport SEXP sigbin_hjorth_params_sig_cpp(SEXP sig_listSEXP, SEXP activitySEXP, SEXP mobilitySEXP, SEXP complexitySEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< List& >::type sig_list(sig_listSEXP);
     Rcpp::traits::input_parameter< NumericVector& >::type activity(activitySEXP);
     Rcpp::traits::input_parameter< NumericVector& >::type mobility(mobilitySEXP);
     Rcpp::traits::input_parameter< NumericVector& >::type complexity(complexitySEXP);
-    hjorth_params_multi_sig_cpp(sig_list, activity, mobility, complexity);
+    hjorth_params_sig_cpp(sig_list, activity, mobility, complexity);
     return R_NilValue;
+END_RCPP
+}
+// sequence_to_signal_cpp
+NumericVector sequence_to_signal_cpp(std::string& seq);
+RcppExport SEXP sigbin_sequence_to_signal_cpp(SEXP seqSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string& >::type seq(seqSEXP);
+    rcpp_result_gen = Rcpp::wrap(sequence_to_signal_cpp(seq));
+    return rcpp_result_gen;
 END_RCPP
 }

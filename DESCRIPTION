@@ -1,7 +1,7 @@
 Package: sigbin
 Type: Package
 Title: Signal-based DNA sequence binning.
-Version: 0.1.0
+Version: 0.99.0
 Authors@R: c(person("Jiri", "Hon", role = c("aut", "cre"),
                     email = "jiri.hon@gmail.com"),
              person("Kristyna", "Kupkova", role = "aut",

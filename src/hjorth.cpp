@@ -1,5 +1,5 @@
 /**
- * Conversion of DNA sequence into numeric signal.
+ * Computation of Hjorth parameters
  *
  * Author: Jiri Hon <jiri.hon@gmail.com>
  * Date: 2016/11/03
@@ -7,42 +7,32 @@
  */
 
 #include <Rcpp.h>
+#include "signal.h"
+
 using namespace Rcpp;
 using namespace std;
 
-
-template <typename T> void sequence_to_signal(const string &seq, T signal) {
-  const double s_a = M_PI/4;
-  const double s_c = -3*M_PI/4;
-  const double s_g = 3*M_PI/4;
-  const double s_t = -M_PI/4;
-
-  for (int i = 0; i < seq.size(); ++i) {
-    switch(seq[i]) {
-    case 'A':
-      signal[i] = s_a;
-      break;
-    case 'C':
-      signal[i] = s_c;
-      break;
-    case 'G':
-      signal[i] = s_g;
-      break;
-    case 'T':
-      signal[i] = s_t;
-      break;
-    default:
-      signal[i] = 0;
-    break;
-    }
-  }
-}
-
+/**
+ * Variance with Bessel's correction.
+ *
+ * @param sum_x Sum of all elements.
+ * @param sum_x2 Sum of all squared elements.
+ * @param n Number of elements
+ */
 inline double bvar(double sum_x, double sum_x2, double n) {
   double mean_x = sum_x / n;
   return (sum_x2 - 2*mean_x*sum_x + mean_x*mean_x*n) / (n - 1);
 }
 
+/**
+ * Template for computing Hjorth parameters from generic signal.
+ *
+ * @param signal Numeric signal.
+ * @param len Signal length.
+ * @param activity Activity output array.
+ * @param mobility Mobility output array.
+ * @param complexity Complexity output array.
+ */
 template <typename T> void hjorth_params(T signal, int len, double *activity, double *mobility, double *complexity) {
   double prev_x = 0, prev_dx = 0,
     sum_x = 0, sum_x2 = 0,
@@ -70,29 +60,28 @@ template <typename T> void hjorth_params(T signal, int len, double *activity, do
   *complexity = (sqrt(bvar(sum_ddx, sum_ddx2, len)) / sd_dx) / *mobility;
 }
 
-
 /**
- * Convert DNA sequence into a numeric signal.
+ * Compute Hjorth parameters for all sequences from character vector.
  *
- * @param seq DNA sequence string
- * @return Numeric signal
+ * @param seq_set Character vector containing set of sequences.
+ * @param activity Activity output vector.
+ * @param mobility Mobility output vector.
+ * @param complexity Complexity output vector.
+ * @param offset Index offset for writing to output vectors.
  */
 // [[Rcpp::export]]
-NumericVector sequence_to_signal_cpp(std::string &seq) {
-  NumericVector signal(seq.size());
-  sequence_to_signal<NumericVector &>(seq, signal);
-  return signal;
-}
-
-// [[Rcpp::export]]
-void hjorth_params_multi_seq_cpp(
+void hjorth_params_seq_cpp(
     std::vector<std::string> &seq_set,
-    int max_seq_len,
-    int offset,
     NumericVector &activity,
     NumericVector &mobility,
-    NumericVector &complexity)
+    NumericVector &complexity,
+    int offset)
 {
+  int max_seq_len = 0;
+  for (vector<string>::iterator it = seq_set.begin(); it != seq_set.end(); ++it) {
+    if ((*it).length() > max_seq_len)
+      max_seq_len = (*it).length();
+  }
   double *signal = new double[max_seq_len];
   double act, mob, com;
 
@@ -105,6 +94,7 @@ void hjorth_params_multi_seq_cpp(
     complexity[offset] = com;
     ++offset;
   }
+  delete signal;
 }
 
 // [[Rcpp::export]]
@@ -117,15 +107,22 @@ void hjorth_params_single_sig_cpp(NumericVector &signal, NumericVector &result)
   result[2] = com;
 }
 
+/**
+ * Compute Hjorth parameters for all signals from a list.
+ *
+ * @param sig_list List containing set of numeric vectors.
+ * @param activity Activity output vector.
+ * @param mobility Mobility output vector.
+ * @param complexity Complexity output vector.
+ */
 // [[Rcpp::export]]
-void hjorth_params_multi_sig_cpp(
+void hjorth_params_sig_cpp(
     List &sig_list,
     NumericVector &activity,
     NumericVector &mobility,
     NumericVector &complexity)
 {
   double act, mob, com;
-
   for (int i = 0; i < sig_list.length(); ++i) {
     NumericVector signal(sig_list[i]);
     hjorth_params<NumericVector &>(signal, signal.length(), &act, &mob, &com);
