@@ -10,7 +10,7 @@
 #define SIGBIN_SIGNAL_HEADER
 
 /**
- * Convert sequence into numeric signal.
+ * Template for sequence conversion into numeric signal.
  *
  * @param seq DNA sequence.
  * @param signal Reference to output signal vector.

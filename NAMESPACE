@@ -2,8 +2,12 @@
 export(dna_signal)
 export(hjorth_params)
 export(fasta_hjorth_params)
+export(sigbin)
+export(plot_sigbin_3d)
 
 importFrom(Rcpp, evalCpp)
 import(Biostrings)
+import(fastcluster)
+import(dynamicTreeCut)
 
 useDynLib(sigbin)

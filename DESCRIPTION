@@ -18,6 +18,8 @@ LazyData: true
 Depends:
     Biostrings
 Imports:
+    fastcluster,
+    dynamicTreeCut,
     Rcpp (>= 0.12.7)
 LinkingTo: Rcpp
 VignetteBuilder: knitr
