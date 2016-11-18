@@ -33,6 +33,20 @@ sigbin <- function(hp, k = NULL) {
   ))
 }
 
+#' Perform binning based on Hjorth parameters.
+#'
+#' @param filepath Path to FASTA file.
+#' @param k Number of clusters.
+#'
+#' @return Input data frame extended by binning annotation.
+#' @examples
+#' file <- system.file("extdata", "reads.fasta", package="sigbin")
+#' binning <- fasta_sigbin(file)
+#'
+fasta_sigbin <- function(filepath, k = NULL) {
+  return(sigbin(fasta_hjorth_params(filepath), k))
+}
+
 #' Plot signal based binning in 3D.
 #'
 #' @param sb Data frame with binning annotation.
