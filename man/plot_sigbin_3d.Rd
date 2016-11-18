@@ -12,4 +12,11 @@ plot_sigbin_3d(sb)
 \description{
 Plot signal based binning in 3D.
 }
+\examples{
+file <- system.file("extdata", "reads.fasta", package="sigbin")
+hp <- fasta_hjorth_params(file)
+binning <- sigbin(hp)
+plot_sigbin_3d(binning)
+
+}
 

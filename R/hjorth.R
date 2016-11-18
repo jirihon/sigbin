@@ -62,6 +62,8 @@ hjorth_params <- function(x) {
 #' @return Data frame of Hjorth parameters.
 #'
 #' @examples
+#' file <- system.file("extdata", "reads.fasta", package="sigbin")
+#' hp <- fasta_hjorth_params(file)
 #'
 fasta_hjorth_params <- function(filepath, block_size = 1e4) {
   seq_lens <- fasta.seqlengths(filepath)

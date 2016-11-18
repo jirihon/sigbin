@@ -12,6 +12,10 @@
 #' @param k Number of clusters.
 #'
 #' @return Input data frame extended by binning annotation.
+#' @examples
+#' file <- system.file("extdata", "reads.fasta", package="sigbin")
+#' hp <- fasta_hjorth_params(file)
+#' binning <- sigbin(hp)
 #'
 sigbin <- function(hp, k = NULL) {
   dst_m <- dist(hp, method = "euclidean")
@@ -32,6 +36,11 @@ sigbin <- function(hp, k = NULL) {
 #' Plot signal based binning in 3D.
 #'
 #' @param sb Data frame with binning annotation.
+#' @examples
+#' file <- system.file("extdata", "reads.fasta", package="sigbin")
+#' hp <- fasta_hjorth_params(file)
+#' binning <- sigbin(hp)
+#' plot_sigbin_3d(binning)
 #'
 plot_sigbin_3d <- function(sb) {
   colors <- tim.colors(length(levels(sb$bin)))
@@ -41,7 +50,7 @@ plot_sigbin_3d <- function(sb) {
   open3d()
   plot3d(sb$activity, sb$mobility, sb$complexity, col = bin_colors,
     xlab = 'Activity', ylab = 'Mobility', zlab = 'Complexity',
-    main = 'Hjorth descriptors from phase')
+    main = 'Hjorth phase descriptors')
 }
 
 # ref_csv <- read.csv("../feature_select/features.csv")

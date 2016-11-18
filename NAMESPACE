@@ -9,5 +9,7 @@ importFrom(Rcpp, evalCpp)
 import(Biostrings)
 import(fastcluster)
 import(dynamicTreeCut)
+importFrom(fields, tim.colors)
+import(rgl)
 
 useDynLib(sigbin)

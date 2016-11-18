@@ -17,4 +17,10 @@ Input data frame extended by binning annotation.
 \description{
 Perform binning based on Hjorth parameters.
 }
+\examples{
+file <- system.file("extdata", "reads.fasta", package="sigbin")
+hp <- fasta_hjorth_params(file)
+binning <- sigbin(hp)
+
+}
 

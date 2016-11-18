@@ -20,6 +20,8 @@ Depends:
 Imports:
     fastcluster,
     dynamicTreeCut,
+    fields,
+    rgl,
     Rcpp (>= 0.12.7)
 LinkingTo: Rcpp
 VignetteBuilder: knitr

@@ -18,6 +18,8 @@ Data frame of Hjorth parameters.
 Compute Hjorth parameters for all DNA sequences from FASTA file.
 }
 \examples{
+file <- system.file("extdata", "reads.fasta", package="sigbin")
+hp <- fasta_hjorth_params(file)
 
 }
 
